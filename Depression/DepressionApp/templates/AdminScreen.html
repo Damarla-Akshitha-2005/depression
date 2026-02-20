@@ -1,37 +1,66 @@
+{% extends 'base.html' %}
 {% load static %}
-<html>
-<head>
-<title>Depression Detection</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link href="{% static 'style.css' %}" rel="stylesheet" type="text/css" media="screen" />
-</head>
-<body>
-<div id="wrapper">
-	<div id="header">
-		<div id="logo">
-			<h1>Online Depression Detection Application</h1>
+
+{% block title %}Admin Dashboard — MindScan{% endblock %}
+
+{% block nav_links %}
+<li><a href="{% url 'ViewUsers' %}" id="nav-users">View Users</a></li>
+<li><a href="{% url 'ViewPosts' %}" id="nav-posts">View Posts</a></li>
+<li><a href="{% url 'SendMotivatedPost' %}" id="nav-send">Send Message</a></li>
+<li><a href="{% url 'ViewMotivatedPost' %}" id="nav-view">View Motivated</a></li>
+<li><a href="{% url 'index' %}" id="nav-logout">Logout</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+	<div class="page-header">
+		<h1 class="page-title">🛡️ Admin Dashboard</h1>
+		<p class="page-subtitle">Manage users, monitor depression posts, and send motivational messages.</p>
+	</div>
+
+	{% if data %}
+	<div class="alert alert-info mb-3">
+		<i class="fas fa-info-circle"></i> {{ data }}
+	</div>
+	{% endif %}
+
+	<div class="action-grid">
+		<a href="{% url 'ViewUsers' %}" class="action-card" id="card-viewusers">
+			<div class="action-card-icon">👥</div>
+			<h3>View All Users</h3>
+			<p>Browse registered users</p>
+		</a>
+		<a href="{% url 'ViewPosts' %}" class="action-card" id="card-viewposts">
+			<div class="action-card-icon">📋</div>
+			<h3>View Depression Posts</h3>
+			<p>Review flagged content</p>
+		</a>
+		<a href="{% url 'SendMotivatedPost' %}" class="action-card" id="card-sendpost">
+			<div class="action-card-icon">💌</div>
+			<h3>Send Motivated Post</h3>
+			<p>Send support messages</p>
+		</a>
+		<a href="{% url 'ViewMotivatedPost' %}" class="action-card" id="card-viewmotivated">
+			<div class="action-card-icon">✨</div>
+			<h3>View Motivated Posts</h3>
+			<p>See sent messages</p>
+		</a>
+	</div>
+
+	<div class="content-card">
+		<div class="content-card-header">
+			<h3>📊 System Overview</h3>
+			<span class="text-muted" style="font-size:0.8rem;">Online Application to Detect Depression from Image Facial
+				Expressions</span>
 		</div>
-		<div id="slogan">
-			
+		<div class="content-card-body">
+			<p style="color:var(--text-muted); line-height:1.7; font-size:0.92rem;">
+				MindScan analyzes user-uploaded images through advanced facial expression recognition
+				technologies to identify potential depression indicators. As an administrator,
+				you can monitor user activity, review flagged image posts, and send motivational
+				messages to users who may need support.
+			</p>
 		</div>
 	</div>
-	<div id="menu">
-		<ul>
-      <li><a href="{% url 'ViewUsers' %}">View Users</a></li>
-      <li><a href="{% url 'ViewPosts' %}">View Depression Post</a></li>
-      <li><a href="{% url 'SendMotivatedPost' %}">Send Motivated Post</a></li>
-	  <li><a href="{% url 'ViewMotivatedPost' %}">View Motivated Post</a></li>
-      <li><a href="{% url 'index' %}">Logout</a></li>
-   </ul>
-		<br class="clearfix" />
-	</div>
-	<div id="splash">
-		<img class="pic" src="{% static 'images/investor.JPG' %}" width="870" height="230" alt="" />
-	</div>
-	<br/>
-	 <center><font face="verdana" color="red">{{ data }}</font></center>
-	 <br/>
-	<p align="justify"><font size="3" style="font-family: Comic Sans MS">
-	Abstract-Online application to detect depression from user's text, image or audio post.</p>
-</body>
-</html>
+</div>
+{% endblock %}

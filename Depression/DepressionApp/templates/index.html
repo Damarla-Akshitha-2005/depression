@@ -1,34 +1,98 @@
+{% extends 'base.html' %}
 {% load static %}
-<html>
-<head>
-<title>Depression Detection</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link href="{% static 'style.css' %}" rel="stylesheet" type="text/css" media="screen" />
-</head>
-<body>
-<div id="wrapper">
-	<div id="header">
-		<div id="logo">
-			<h1>Online Depression Detection Application</h1>
+
+{% block title %}MindScan — AI Depression Detection{% endblock %}
+
+{% block nav_links %}
+<li><a href="{% url 'index' %}" class="active" id="nav-home">Home</a></li>
+<li><a href="{% url 'BrowseExperiences' %}" id="nav-experiences">Browse Stories</a></li>
+<li><a href="{% url 'Login' %}" id="nav-user">User Login</a></li>
+<li><a href="{% url 'Register' %}" id="nav-register">Register</a></li>
+<li><a href="{% url 'Register' %}" id="nav-register">Register</a></li>
+{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero">
+	<div class="hero-content">
+		<div class="hero-badge">
+			<span class="pulse-dot"></span> AI-Powered Mental Health Detection
 		</div>
-		<div id="slogan">
-			
+		<h1>
+			Detect Depression<br />
+			<span class="gradient-text">Before It's Too Late</span>
+		</h1>
+		<p>
+			MindScan uses advanced AI to analyze your facial expressions in images
+			for signs of depression — helping you or your loved ones get support
+			at the right time.
+		</p>
+		<div class="hero-actions">
+			<a href="{% url 'Register' %}" class="btn btn-primary">
+				<i class="fas fa-user-plus"></i> Get Started Free
+			</a>
+			<a href="{% url 'Login' %}" class="btn btn-secondary">
+				<i class="fas fa-sign-in-alt"></i> User Login
+			</a>
 		</div>
 	</div>
-	<div id="menu">
-		<ul>
-      <li><a href="{% url 'index' %}">Home</a></li>
-      <li><a href="{% url 'Login' %}">User</a></li>
-      <li><a href="{% url 'Register' %}">Register Here</a></li>
-      <li><a href="{% url 'Admin' %}">Administrator</a></li>
-   </ul>
-		<br class="clearfix" />
+
+	<div class="hero-visual">
+		<div class="hero-card">
+			<div class="hero-card-title">🧠 Mental Health AI</div>
+			<div class="hero-card-sub">Real-time depression screening</div>
+			<div class="hero-stat-grid">
+				<div class="stat-item">
+					<div class="stat-value">95%</div>
+					<div class="stat-label">Accuracy</div>
+				</div>
+				<div class="stat-item">
+					<div class="stat-value">1</div>
+					<div class="stat-label">Input Type (Image)</div>
+				</div>
+				<div class="stat-item">
+					<div class="stat-value">AI</div>
+					<div class="stat-label">Powered</div>
+				</div>
+				<div class="stat-item">
+					<div class="stat-value">24/7</div>
+					<div class="stat-label">Available</div>
+				</div>
+			</div>
+		</div>
 	</div>
-	<div id="splash">
-		<img class="pic" src="{% static 'images/investor.JPG' %}" width="870" height="230" alt="" />
+</section>
+
+<!-- FEATURES -->
+<div class="section-header">
+	<h2>Everything You Need for <span class="gradient-text">Mental Wellness</span></h2>
+	<p>Comprehensive tools to monitor and improve mental health using cutting-edge AI.</p>
+</div>
+
+<div class="features-grid">
+
+	<div class="feature-card">
+		<div class="feature-icon icon-pink">🖼️</div>
+		<h3>Image Recognition</h3>
+		<p>AI-powered image analysis extracts text and visual cues that may indicate depressive tendencies.</p>
 	</div>
-	<br/>
-	<p align="justify"><font size="3" style="font-family: Comic Sans MS">
-	Abstract-Online application to detect depression from user's text, image or audio post.</p>
-</body>
-</html>
+
+	<div class="feature-card">
+		<div class="feature-icon icon-purple">💌</div>
+		<h3>Motivational Support</h3>
+		<p>Receive personalized motivational messages from certified counselors to help you stay positive.</p>
+	</div>
+
+	<div class="feature-card">
+		<div class="feature-icon icon-cyan">🛡️</div>
+		<h3>Privacy First</h3>
+		<p>Your data is encrypted and confidential. We prioritize your privacy above everything else.</p>
+	</div>
+
+	<div class="feature-card">
+		<div class="feature-icon icon-orange">📚</div>
+		<h3>Share Your Story</h3>
+		<p>When you're doing well, share your success story to help others overcome their challenges.</p>
+	</div>
+</div>
+{% endblock %}

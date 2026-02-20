@@ -1,36 +1,25 @@
+{% extends 'base.html' %}
 {% load static %}
-<html>
-<head>
-<title>Depression Detection</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link href="{% static 'style.css' %}" rel="stylesheet" type="text/css" media="screen" />
-</head>
-<body>
-<div id="wrapper">
-	<div id="header">
-		<div id="logo">
-			<h1>Online Depression Detection Application</h1>
-		</div>
-		<div id="slogan">
-			
-		</div>
+
+{% block title %}View All Users — MindScan{% endblock %}
+
+{% block nav_links %}
+<li><a href="{% url 'ViewUsers' %}" class="active" id="nav-users">View Users</a></li>
+<li><a href="{% url 'ViewPosts' %}" id="nav-posts">View Posts</a></li>
+<li><a href="{% url 'SendMotivatedPost' %}" id="nav-send">Send Message</a></li>
+<li><a href="{% url 'ViewMotivatedPost' %}" id="nav-view">View Motivated</a></li>
+<li><a href="{% url 'index' %}" id="nav-logout">Logout</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+	<div class="page-header">
+		<h1 class="page-title">👥 All Registered Users</h1>
+		<p class="page-subtitle">Browse all users registered on the MindScan platform.</p>
 	</div>
-	<div id="menu">
-		<ul>
-      <li><a href="{% url 'ViewUsers' %}">View Users</a></li>
-      <li><a href="{% url 'ViewPosts' %}">View Depression Post</a></li>
-      <li><a href="{% url 'SendMotivatedPost' %}">Send Motivated Post</a></li>
-	  <li><a href="{% url 'ViewMotivatedPost' %}">View Motivated Post</a></li>
-      <li><a href="{% url 'index' %}">Logout</a></li>
-   </ul>
-		<br class="clearfix" />
+
+	<div class="table-wrap">
+		{{ data|safe }}
 	</div>
-	<div id="splash">
-		<img class="pic" src="{% static 'images/investor.JPG' %}" width="870" height="230" alt="" />
-	</div>
-	<br/>
-	 <br/>
-	{{ data|safe }}
-	
-</body>
-</html>
+</div>
+{% endblock %}

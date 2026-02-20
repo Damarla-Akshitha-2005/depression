@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Helpful Experiences from Others — MindScan{% endblock %}
+
+{% block nav_links %}
+<li><a href="{% url 'SearchFriends' %}" id="nav-friends">Search Friends</a></li>
+<li><a href="{% url 'UploadPost' %}" id="nav-upload">Upload Post</a></li>
+<li><a href="{% url 'BrowseExperiences' %}" class="active" id="nav-browse">Browse Experiences</a></li>
+<li><a href="{% url 'index' %}" id="nav-logout">Logout</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+	<div class="page-form-card" style="max-width: 900px;">
+		<div class="auth-header">
+			<div class="auth-icon">📚</div>
+			<h2>Helpful Experiences from Others</h2>
+			<p>Read stories from people who overcame challenges and find inspiration</p>
+		</div>
+
+		{% if experiences %}
+		<div style="margin-top: 30px;">
+			{% for exp in experiences %}
+			<div class="experience-card"
+				style="background: linear-gradient(135deg, rgba(88, 166, 255, 0.1) 0%, rgba(240, 147, 251, 0.1) 100%); border: 1px solid rgba(88, 166, 255, 0.3); padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+				<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+					<div>
+						<h3 style="margin: 0; color: #58a6ff; font-size: 1.3rem;">{{ exp.title }}</h3>
+						<p style="margin: 5px 0 0 0; color: #999; font-size: 0.9rem;">
+							<i class="fas fa-user-circle"></i> by <strong>{{ exp.username }}</strong>
+							<span style="margin-left: 15px;">
+								<i class="fas fa-calendar-alt"></i> {{ exp.created_at }}
+							</span>
+						</p>
+					</div>
+					<div
+						style="background: #58a6ff; color: white; padding: 8px 12px; border-radius: 5px; font-weight: bold;">
+						<i class="fas fa-heart"></i> Helpful
+					</div>
+				</div>
+
+				<div
+					style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; margin: 15px 0; line-height: 1.7; color: #ddd; white-space: pre-wrap; word-wrap: break-word;">
+					{{ exp.experience }}
+				</div>
+
+				<div
+					style="padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; gap: 10px; flex-wrap: wrap;">
+					<button onclick="likeExperience(this)"
+						style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+						<i class="fas fa-thumbs-up"></i> Found Helpful
+					</button>
+					<button onclick="shareExperience('{{ exp.title }}', '{{ exp.username }}')"
+						style="background: rgba(240, 147, 251, 0.2); color: #f093fb; border: 1px solid #f093fb; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+						<i class="fas fa-share"></i> Share
+					</button>
+					{% if exp.username == current_viewer %}
+					<button onclick="confirmDeleteExperience({{ exp.id }})"
+						style="background: rgba(255, 107, 107, 0.1); color: #ff6b6b; border: 1px solid #ff6b6b; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-left: auto;">
+						<i class="fas fa-trash"></i> Delete
+					</button>
+					{% endif %}
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+
+		{% else %}
+		<div style="text-align: center; padding: 40px 20px;">
+			<div style="font-size: 3rem; margin-bottom: 20px;">📭</div>
+			<h3 style="color: #999; margin: 20px 0;">No experiences shared yet</h3>
+			<p style="color: #666; margin-bottom: 30px;">Be the first to share your success story and help others!</p>
+			<a href="{% url 'UploadPost' %}" class="form-submit"
+				style="display: inline-block; text-decoration: none; padding: 12px 25px;">
+				<i class="fas fa-plus"></i> Upload ECG & Share
+			</a>
+		</div>
+		{% endif %}
+
+		<div class="auth-footer-link mt-5" style="text-align: center;">
+			<p style="color: #999; margin-bottom: 15px;">Are you also happy with your wellness journey?</p>
+			<a href="{% url 'UploadPost' %}" class="form-submit"
+				style="display: inline-block; text-decoration: none; padding: 12px 25px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+				<i class="fas fa-heart"></i> Share Your Experience
+			</a>
+			<br /><br />
+			<a href="javascript:history.back()"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+	function likeExperience(button) {
+		button.style.transform = 'scale(0.95)';
+		setTimeout(() => {
+			button.style.transform = 'scale(1)';
+			button.innerHTML = '<i class="fas fa-heart" style="color: #ff6b6b;"></i> You Found This Helpful!';
+			button.disabled = true;
+			button.style.opacity = '0.7';
+		}, 100);
+	}
+
+	function shareExperience(title, author) {
+		const text = `Check out this experience on MindScan: "${title}" by ${author}. It might help you too!`;
+		if (navigator.share) {
+			navigator.share({
+				title: 'MindScan Experience',
+				text: text,
+			}).catch(err => console.log('Error sharing:', err));
+		} else {
+			alert('Share this experience:\n\n' + text);
+		}
+	}
+
+	function confirmDeleteExperience(expId) {
+		if (confirm("Are you sure you want to delete this experience story?")) {
+			const formData = new FormData();
+			formData.append('exp_id', expId);
+			formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+			fetch("{% url 'DeleteExperience' %}", {
+				method: 'POST',
+				body: formData
+			})
+				.then(response => response.json())
+				.then(data => {
+					if (data.status === 'ok') {
+						location.reload();
+					} else {
+						alert("Error deleting experience.");
+					}
+				})
+				.catch(error => console.error('Error:', error));
+		}
+	}
+</script>
+{% endblock %}

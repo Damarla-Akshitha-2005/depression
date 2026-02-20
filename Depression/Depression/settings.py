@@ -56,7 +56,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-		os.path.join('C:/Python/Depression/DepressionApp', 'templates'),
+		os.path.join(BASE_DIR, 'DepressionApp', 'templates'),
 	],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -75,7 +75,7 @@ WSGI_APPLICATION = 'Depression.wsgi.application'
 CACHES = {
    'default': {
       'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-      'LOCATION': 'C:/cache/django_cache.txt',
+      'LOCATION': os.path.join(BASE_DIR, 'cache'),
    }
 }
 
@@ -85,15 +85,8 @@ CACHES = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'depression',
-        'HOST': '127.0.0.1',
-        'PORT': '3308',
-        'USER': 'root',
-        'PASSWORD': 'root',
-	'OPTIONS': {
-          'autocommit': True,
-        },        
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -134,3 +127,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'DepressionApp', 'static'),
+]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -1,36 +1,82 @@
+{% extends 'base.html' %}
 {% load static %}
-<html>
-<head>
-<title>Depression Detection</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link href="{% static 'style.css' %}" rel="stylesheet" type="text/css" media="screen" />
-</head>
-<body>
-<div id="wrapper">
-	<div id="header">
-		<div id="logo">
-			<h1>Online Depression Detection Application</h1>
+
+{% block title %}User Dashboard — MindScan{% endblock %}
+
+{% block nav_links %}
+<li><a href="{% url 'SearchFriends' %}" id="nav-friends">Search Friends</a></li>
+<li><a href="{% url 'UploadPost' %}" id="nav-upload">Upload Post</a></li>
+<li><a href="{% url 'BrowseExperiences' %}" id="nav-experiences">Browse Stories</a></li>
+<li><a href="{% url 'MotivatedText' %}" id="nav-motivated">Motivated Posts</a></li>
+<li><a href="{% url 'UserProfile' %}" id="nav-profile">My Profile</a></li>
+<li><a href="{% url 'index' %}" id="nav-logout">Logout</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+	<div class="page-header">
+		<h1 class="page-title">👋 Welcome to MindScan</h1>
+		<p class="page-subtitle">Your personal mental wellness hub. Stay connected and stay strong.</p>
+	</div>
+
+	{% if data %}
+	<div class="alert alert-info mb-3">
+		<i class="fas fa-info-circle"></i> {{ data }}
+	</div>
+	{% endif %}
+
+	<div class="action-grid">
+		<a href="{% url 'SearchFriends' %}" class="action-card" id="card-friends">
+			<div class="action-card-icon">🔍</div>
+			<h3>Search Friends</h3>
+			<p>Find and connect with others</p>
+		</a>
+		<a href="{% url 'UploadPost' %}" class="action-card" id="card-upload">
+			<div class="action-card-icon">📤</div>
+			<h3>Upload Image</h3>
+			<p>Analyze facial expressions</p>
+		</a>
+		<a href="{% url 'ShareExperience' %}" class="action-card" id="card-share">
+			<div class="action-card-icon">✍️</div>
+			<h3>Share Experience</h3>
+			<p>Help others with your story</p>
+		</a>
+		<a href="{% url 'BrowseExperiences' %}" class="action-card" id="card-experiences">
+			<div class="action-card-icon">📚</div>
+			<h3>Browse Stories</h3>
+			<p>Read success stories</p>
+		</a>
+		<a href="{% url 'MotivatedText' %}" class="action-card" id="card-motivated">
+			<div class="action-card-icon">💡</div>
+			<h3>Support Posts</h3>
+			<p>Read motivational messages</p>
+		</a>
+		<a href="{% url 'UserProfile' %}" class="action-card" id="card-profile">
+			<div class="action-card-icon">👤</div>
+			<h3>My Profile</h3>
+			<p>Manage your posts & history</p>
+		</a>
+		<a href="{% url 'index' %}" class="action-card" id="card-logout">
+			<div class="action-card-icon">👋</div>
+			<h3>Logout</h3>
+			<p>Sign out</p>
+		</a>
+	</div>
+
+	<div class="content-card">
+		<div class="content-card-header">
+			<h3>💙 About MindScan</h3>
 		</div>
-		<div id="slogan">
-			
+		<div class="content-card-body">
+			<p style="color:var(--text-muted); line-height:1.7; font-size:0.92rem;">
+				MindScan is your AI-powered companion for mental wellness. Upload your image —
+				and our system will analyze it for signs of depression through facial expressions. You'll receive
+				personalized motivational messages to help you stay positive and resilient.
+				<br /><br />
+				<strong>New Feature:</strong> When you're feeling good, share your best experience or success story!
+				Your positive journey can help others struggling with depression find hope and inspiration. 💜
+			</p>
 		</div>
 	</div>
-	<div id="menu">
-		<ul>
-      <li><a href="{% url 'SearchFriends' %}">Search Friends</a></li>
-      <li><a href="{% url 'UploadPost' %}">Upload Post</a></li>
-      <li><a href="{% url 'MotivatedText' %}">View Motivated Post</a></li>
-      <li><a href="{% url 'index' %}">Logout</a></li>
-   </ul>
-		<br class="clearfix" />
-	</div>
-	<div id="splash">
-		<img class="pic" src="{% static 'images/investor.JPG' %}" width="870" height="230" alt="" />
-	</div>
-	<br/>
-	 <center><font face="verdana" color="red">{{ data }}</font></center>
-	 <br/>
-	<p align="justify"><font size="3" style="font-family: Comic Sans MS">
-	Abstract-Online application to detect depression from user's text, image or audio post.</p>
-</body>
-</html>
+</div>
+{% endblock %}

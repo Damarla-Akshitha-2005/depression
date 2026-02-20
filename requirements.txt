@@ -1,0 +1,12 @@
+django
+groq
+deepface
+joblib
+numpy
+matplotlib
+pillow
+python-dotenv
+pytesseract
+opencv-python
+tf-keras
+tensorflow

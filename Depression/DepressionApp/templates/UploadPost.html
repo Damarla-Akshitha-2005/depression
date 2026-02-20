@@ -1,63 +1,139 @@
+{% extends 'base.html' %}
 {% load static %}
-<html>
-<head>
-<title>Depression Detection</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link href="{% static 'style.css' %}" rel="stylesheet" type="text/css" media="screen" />
-<script language="javascript">
-	function validate(formObj)
-	{
-	if(formObj.t1.value.length==0)
-	{
-	alert("Please upload either image,textfile or audio file");
-	formObj.t1.focus();
-	return false;
-	}
-	formObj.actionUpdateData.value="update";
-	return true;
-	}
-	</script>
-</head>
-<body>
-<div id="wrapper">
-	<div id="header">
-		<div id="logo">
-			<h1>Online Depression Detection Application</h1>
+
+{% block title %}Upload Post — MindScan{% endblock %}
+
+{% block nav_links %}
+<li><a href="{% url 'SearchFriends' %}" id="nav-friends">Search Friends</a></li>
+<li><a href="{% url 'UploadPost' %}" class="active" id="nav-upload">Upload Post</a></li>
+<li><a href="{% url 'MotivatedText' %}" id="nav-motivated">Motivated Posts</a></li>
+<li><a href="{% url 'index' %}" id="nav-logout">Logout</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+	<div class="page-form-card">
+		<div class="auth-header">
+			<div class="auth-icon">📤</div>
+			<h2>Upload Post</h2>
+			<p>Share an image post for AI facial expression analysis</p>
 		</div>
-		<div id="slogan">
-			
+
+		<form name="f1" method="post" action="{% url 'UploadPostData' %}" enctype="multipart/form-data"
+			onsubmit="return validate(this);">
+			{% csrf_token %}
+
+			<div class="form-group">
+				<label class="form-label">Select File (Image Only)</label>
+				<label class="file-drop-zone" for="file-input">
+					<span class="file-drop-icon">🗂️</span>
+					<strong id="file-label">Click to browse or drop image here</strong>
+					<span style="font-size:0.78rem; margin-top:0.4rem; display:block;">Supports .jpg, .png, .webp</span>
+					<input type="file" id="file-input" name="t1" accept=".jpg,.jpeg,.png,.webp"
+						onchange="updateLabel(this)" />
+				</label>
+			</div>
+
+			<button type="submit" class="form-submit">
+				<i class="fas fa-upload"></i> &nbsp;Upload &amp; Analyze
+			</button>
+		</form>
+
+		<div class="auth-footer-link mt-2">
+			<a href="javascript:history.back()"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
 		</div>
 	</div>
-	<div id="menu">
-		<ul>
-      <li><a href="{% url 'SearchFriends' %}">Search Friends</a></li>
-      <li><a href="{% url 'UploadPost' %}">Upload Post</a></li>
-      <li><a href="{% url 'MotivatedText' %}">View Motivated Post</a></li>
-      <li><a href="{% url 'index' %}">Logout</a></li>
-   </ul>					<br class="clearfix" />
-				</div>
-			
-	<div id="splash">
-		<img class="pic" src="{% static 'images/investor.JPG' %}" width="870" height="230" alt="" />
-	</div>	
-			<center>
-<form name="f1" method="post" action="{% url 'UploadPostData' %}" enctype="multipart/form-data" onsubmit="return validate(this);">
-{% csrf_token %}<br/>
-   <h2><b>Upload Post Screen</b></h2>
+</div>
 
-   <center><font face="verdana" color="red">{{ data }}</font></center>
-   
-					
-						<table align="center" width="40" >
-			 <tr><td><b>Upload&nbsp;Post</b></td><td><input type="file" name="t1" style="font-family: Comic Sans MS" size=30/></td></tr>
-         
-		  		 
+<!-- RESULT POPUP MODAL -->
+{% if data %}
+<div class="popup-overlay" id="resultOverlay">
+	<div class="popup-modal">
+		{% if 'Negative' in data %}
+		<div class="popup-icon popup-icon-negative">
+			<i class="fas fa-exclamation-triangle"></i>
+		</div>
+		<h2 class="popup-title popup-title-negative">Depression Detected</h2>
+		<p class="popup-message">The AI analysis indicates signs of <strong>Negative</strong> sentiment.</p>
+
+		{% if support_messages %}
+		<div
+			style="text-align: left; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin: 15px 0;">
+			<p style="margin-bottom: 10px; font-weight: bold;">Sportive Motivation for You:</p>
+			<ul style="list-style-type: none; padding: 0;">
+				{% for msg in support_messages %}
+				<li style="margin-bottom: 8px;">✨ {{ msg }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+
+		<a href="{% url 'Chatbot' %}" class="popup-btn"
+			style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 10px; font-weight: bold;">
+			<i class="fas fa-user-md"></i> Chat with Dr. MindScan
+		</a>
+		{% endif %}
+
+		{% if suggestion %}
+		<p class="popup-sub" style="font-weight: bold; color: #ffeb3b;">{{ suggestion }}</p>
+		{% endif %}
+
+		{% else %}
+		<div class="popup-icon popup-icon-positive">
+			<i class="fas fa-check-circle"></i>
+		</div>
+		<h2 class="popup-title popup-title-positive">No Depression Detected</h2>
+		<p class="popup-message">The AI analysis indicates <strong>Positive</strong> sentiment.</p>
 		
-			<tr><td></td><td><input type="submit" value="Upload"></td>
-			</table>
-				</div>	
-					
-				</div>
-				
-	</body>
-</html>
+		{% if suggestion %}
+		<p class="popup-sub" style="font-weight: bold;">{{ suggestion }}</p>
+		{% endif %}
+		
+		<!-- NEW: Share Experience Button -->
+		<div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2);">
+			<p style="font-size: 0.9rem; margin-bottom: 12px;">💡 <strong>Help others with your story!</strong></p>
+			<a href="{% url 'ShareExperience' %}" class="popup-btn"
+				style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+				<i class="fas fa-heart"></i> Share Your Best Experience
+			</a>
+			<p style="font-size: 0.8rem; margin-top: 8px; color: #ddd;">Help people struggling with depression by sharing what worked for you.</p>
+		</div>
+		{% endif %}
+		<div class="popup-result-badge">
+			{{ data }}
+		</div>
+		<button class="popup-close-btn" onclick="closePopup()">
+			<i class="fas fa-times"></i>&nbsp; Close
+		</button>
+	</div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+	function validate(formObj) {
+		if (!document.getElementById('file-input').files.length) {
+			alert("Please upload an image file (.jpg, .png, .webp)");
+			return false;
+		}
+		return true;
+	}
+	function updateLabel(input) {
+		if (input.files && input.files.length > 0) {
+			document.getElementById('file-label').textContent = input.files[0].name;
+		}
+	}
+	function closePopup() {
+		document.getElementById('resultOverlay').style.opacity = '0';
+		setTimeout(function () { document.getElementById('resultOverlay').style.display = 'none'; }, 300);
+	}
+	// Auto-show popup with animation
+	{% if data %}
+	window.addEventListener('DOMContentLoaded', function () {
+		var overlay = document.getElementById('resultOverlay');
+		overlay.style.display = 'flex';
+		setTimeout(function () { overlay.style.opacity = '1'; }, 50);
+	});
+	{% endif %}
+</script>
+{% endblock %}

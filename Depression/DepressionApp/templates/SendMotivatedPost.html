@@ -1,79 +1,90 @@
+{% extends 'base.html' %}
 {% load static %}
-<html>
-<head>
-<title>Depression Detection</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link href="{% static 'style.css' %}" rel="stylesheet" type="text/css" media="screen" />
-<script language="javascript">
-	function validate(formObj)
-	{
-	if(formObj.t1.value.length==0)
-	{
-	alert("Please Enter Username");
-	formObj.t1.focus();
-	return false;
-	}
-	if(formObj.t2.value.length==0)
-	{
-	alert("Please Enter Post time");
-	formObj.t2.focus();
-	return false;
-	}
-	if(formObj.t3.value.length==0)
-	{
-	alert("Please Enter motivated text);
-	formObj.t3.focus();
-	return false;
-	}
-	formObj.actionUpdateData.value="update";
-	return true;
-	}
-	</script>
-</head>
-<body>
-<div id="wrapper">
-	<div id="header">
-		<div id="logo">
-			<h1>Online Depression Detection Application</h1>
+
+{% block title %}Send Motivated Post — MindScan{% endblock %}
+
+{% block nav_links %}
+<li><a href="{% url 'ViewUsers' %}" id="nav-users">View Users</a></li>
+<li><a href="{% url 'ViewPosts' %}" id="nav-posts">View Posts</a></li>
+<li><a href="{% url 'SendMotivatedPost' %}" class="active" id="nav-send">Send Message</a></li>
+<li><a href="{% url 'ViewMotivatedPost' %}" id="nav-view">View Motivated</a></li>
+<li><a href="{% url 'index' %}" id="nav-logout">Logout</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+	<div class="page-form-card">
+		<div class="auth-header">
+			<div class="auth-icon">💌</div>
+			<h2>Send Motivated Post</h2>
+			<p>Send an uplifting message to a user who needs support</p>
 		</div>
-		<div id="slogan">
-			
+
+		{% if data %}
+		<div
+			class="alert alert-{% if 'success' in data|lower or 'sent' in data|lower %}success{% else %}danger{% endif %}">
+			<i
+				class="fas fa-{% if 'success' in data|lower or 'sent' in data|lower %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+			{{ data }}
+		</div>
+		{% endif %}
+
+		<form name="f1" method="post" action="{% url 'SendMotivatedPostData' %}" onsubmit="return validate(this);">
+			{% csrf_token %}
+
+			<div class="form-group">
+				<label class="form-label" for="smp-username">Recipient Username</label>
+				<div class="input-wrapper">
+					<i class="fas fa-user input-icon"></i>
+					<input class="form-input" type="text" id="smp-username" name="t1"
+						placeholder="Enter recipient's username" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="form-label" for="smp-posttime">Post Time</label>
+				<div class="input-wrapper">
+					<i class="fas fa-clock input-icon"></i>
+					<input class="form-input" type="text" id="smp-posttime" name="t2"
+						placeholder="e.g. 2025-01-15 10:30 AM" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="form-label" for="smp-message">Motivational Message</label>
+				<textarea class="form-input no-icon" id="smp-message" name="t3"
+					placeholder="Write an uplifting, encouraging message here…" rows="4"
+					style="resize:vertical; padding-left:1rem;"></textarea>
+			</div>
+
+			<button type="submit" class="form-submit">
+				<i class="fas fa-paper-plane"></i> &nbsp;Send Message
+			</button>
+		</form>
+
+		<div class="auth-footer-link mt-2">
+			<a href="javascript:history.back()"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
 		</div>
 	</div>
-	<div id="menu">
-		<ul>
-      <li><a href="{% url 'ViewUsers' %}">View Users</a></li>
-      <li><a href="{% url 'ViewPosts' %}">View Depression Post</a></li>
-      <li><a href="{% url 'SendMotivatedPost' %}">Send Motivated Post</a></li>
-	  <li><a href="{% url 'ViewMotivatedPost' %}">View Motivated Post</a></li>
-      <li><a href="{% url 'ViewMotivatedPost' %}">Logout</a></li>
-   </ul>					<br class="clearfix" />
-				</div>
-			
-	<div id="splash">
-		<img class="pic" src="{% static 'images/investor.JPG' %}" width="870" height="230" alt="" />
-	</div>	
-			<center>
-<form name="f1" method="post" action="{% url 'SendMotivatedPostData' %}" onsubmit="return validate(this);">
-{% csrf_token %}<br/>
-   <h2><b>Send Motivated Post Data Screen</b></h2>
+</div>
+{% endblock %}
 
-   <center><font face="verdana" color="red">{{ data }}</font></center>
-   
-					
-						<table align="center" width="40" >
-			 <tr><td><b>Username</b></td><td><input type="text" name="t1" style="font-family: Comic Sans MS" size=30/></td></tr>
-         
-		  <tr><td><b>Post&nbsp;Time</b></td><td><input type="text" name="t2" style="font-family: Comic Sans MS" size=20/></td></tr>
-
-		 
-		<tr><td><b>Motivated&nbsp;Message</b></td><td><input type="text" name="t3" style="font-family: Comic Sans MS" size=40/></td></tr>
-
-			<tr><td></td><td><input type="submit" value="Send"></td>
-			</table>
-				</div>	
-					
-				</div>
-				
-	</body>
-</html>
+{% block scripts %}
+<script>
+	function validate(formObj) {
+		if (formObj.t1.value.length === 0) {
+			alert("Please enter the recipient's Username");
+			formObj.t1.focus(); return false;
+		}
+		if (formObj.t2.value.length === 0) {
+			alert("Please enter the Post Time");
+			formObj.t2.focus(); return false;
+		}
+		if (formObj.t3.value.length === 0) {
+			alert("Please enter a Motivational Message");
+			formObj.t3.focus(); return false;
+		}
+		return true;
+	}
+</script>
+{% endblock %}

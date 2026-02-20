@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}MindScan — Depression Detection{% endblock %}</title>
+    <meta name="description"
+        content="Online application to detect depression from user's text, image or audio post using AI." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="{% static 'style.css' %}" rel="stylesheet" />
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="{% url 'index' %}" class="logo">
+            <span class="logo-icon">🧠</span>
+            MindScan
+        </a>
+        <ul class="nav-links">
+            {% block nav_links %}
+            <li><a href="{% url 'index' %}" id="nav-home">Home</a></li>
+            <li><a href="{% url 'Login' %}" id="nav-user">User Login</a></li>
+            <li><a href="{% url 'Register' %}" id="nav-register">Register</a></li>
+            <li><a href="{% url 'Chatbot' %}" id="nav-chat">AI Psychiatrist</a></li>
+            {% endblock %}
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>🧠 MindScan &mdash; AI-powered Depression Detection &copy; 2025. All rights reserved.</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

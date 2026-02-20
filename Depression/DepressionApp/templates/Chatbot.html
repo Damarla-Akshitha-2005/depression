@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}MindScan — AI Psychiatrist{% endblock %}
+
+{% block nav_links %}
+<li><a href="{% url 'SearchFriends' %}" id="nav-friends">Search Friends</a></li>
+<li><a href="{% url 'UploadPost' %}" id="nav-upload">Upload Post</a></li>
+<li><a href="{% url 'MotivatedText' %}" id="nav-motivated">Motivated Posts</a></li>
+<li><a href="{% url 'Chatbot' %}" class="active" id="nav-chat">AI Psychiatrist</a></li>
+<li><a href="{% url 'index' %}" id="nav-logout">Logout</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="chat-page">
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-avatar">🩺</div>
+            <div class="chat-info">
+                <h2>Dr. MindScal</h2>
+                <p>Your Caring Mental Health Guide</p>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will appear here -->
+            {% if chat_history %}
+            {% for msg in chat_history %}
+            <div class="message {% if msg.role == 'user' %}user-message{% else %}bot-message{% endif %}">
+                <div class="message-content">
+                    {{ msg.content }}
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="message bot-message">
+                <div class="message-content">
+                    Hello. I'm Dr. MindScan. I'm here to listen and support you. How are you feeling right now?
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="chat-input-area">
+            <form id="chat-form" onsubmit="sendMessage(event)">
+                {% csrf_token %}
+                <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off" required>
+                <button type="submit" id="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .chat-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        padding: 20px;
+    }
+
+    .chat-container {
+        width: 100%;
+        max-width: 600px;
+        background: rgba(255, 255, 255, 0.05);
+        /* Glassmorphism */
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        height: 70vh;
+        overflow: hidden;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .chat-header {
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .chat-avatar {
+        font-size: 2.5rem;
+        margin-right: 15px;
+    }
+
+    .chat-info h2 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #fff;
+    }
+
+    .chat-info p {
+        margin: 5px 0 0;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .message {
+        max-width: 80%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        line-height: 1.5;
+        font-size: 0.95rem;
+        position: relative;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .user-message {
+        align-self: flex-end;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-bottom-right-radius: 2px;
+    }
+
+    .bot-message {
+        align-self: flex-start;
+        background: rgba(255, 255, 255, 0.1);
+        color: #e0e0e0;
+        border-bottom-left-radius: 2px;
+    }
+
+    .chat-input-area {
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.2);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #chat-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    #user-input {
+        flex: 1;
+        padding: 12px 20px;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.2);
+        color: white;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    #user-input:focus {
+        border-color: #764ba2;
+        background: rgba(0, 0, 0, 0.4);
+    }
+
+    #send-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.2s ease;
+    }
+
+    #send-btn:hover {
+        transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Typing indicator */
+    .typing {
+        font-style: italic;
+        color: #aaa;
+        font-size: 0.8rem;
+        margin-left: 10px;
+        display: none;
+    }
+</style>
+
+<script>
+    async function sendMessage(event) {
+        event.preventDefault();
+        const input = document.getElementById('user-input');
+        const message = input.value.trim();
+        const chatMessages = document.getElementById('chat-messages');
+
+        if (!message) return;
+
+        // Add user message
+        appendMessage('user', message);
+        input.value = '';
+
+        // Show typing or loading state here if desired
+
+        try {
+            const response = await fetch("{% url 'ChatBotResponse' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `message=${encodeURIComponent(message)}`
+            });
+
+            const data = await response.json();
+
+            if (data.response) {
+                appendMessage('bot', data.response);
+            } else {
+                appendMessage('bot', "I'm having trouble connecting right now. Please try again.");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            appendMessage('bot', "Connection error. Please check your internet.");
+        }
+    }
+
+    function appendMessage(role, text) {
+        const chatMessages = document.getElementById('chat-messages');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${role === 'user' ? 'user-message' : 'bot-message'}`;
+        msgDiv.innerHTML = `<div class="message-content">${text}</div>`;
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Auto-scroll to bottom on load
+    window.onload = function () {
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+</script>
+{% endblock %}

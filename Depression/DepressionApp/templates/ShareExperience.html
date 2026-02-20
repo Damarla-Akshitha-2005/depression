@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Share Your Best Experience — MindScan{% endblock %}
+
+{% block nav_links %}
+<li><a href="{% url 'SearchFriends' %}" id="nav-friends">Search Friends</a></li>
+<li><a href="{% url 'UploadPost' %}" id="nav-upload">Upload Post</a></li>
+<li><a href="{% url 'BrowseExperiences' %}" id="nav-browse">Browse Stories</a></li>
+<li><a href="{% url 'UserProfile' %}" id="nav-profile">My Profile</a></li>
+<li><a href="{% url 'index' %}" id="nav-logout">Logout</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+	<div class="page-form-card">
+		<div class="auth-header">
+			<div class="auth-icon">💝</div>
+			<h2>Share Your Best Experience</h2>
+			<p>Help someone struggling with depression by sharing your positive story</p>
+		</div>
+
+		{% if error %}
+		<div style="background: #ff6b6b; color: white; padding: 12px; border-radius: 5px; margin-bottom: 20px;">
+			<i class="fas fa-exclamation-circle"></i> {{ error }}
+		</div>
+		{% endif %}
+
+		{% if success %}
+		<div style="background: #51cf66; color: white; padding: 12px; border-radius: 5px; margin-bottom: 20px;">
+			<i class="fas fa-check-circle"></i> {{ success }}
+		</div>
+		<div style="text-align: center; margin-top: 20px;">
+			<a href="{% url 'BrowseExperiences' %}" class="form-submit"
+				style="display: inline-block; text-decoration: none; padding: 12px 20px;">
+				<i class="fas fa-book-open"></i> See All Stories
+			</a>
+			<a href="{% url 'UploadPost' %}" class="form-submit"
+				style="display: inline-block; text-decoration: none; padding: 12px 20px;">
+				<i class="fas fa-plus"></i> Share Another
+			</a>
+		</div>
+		{% else %}
+
+		<form name="experience_form" method="post" action="{% url 'SaveExperience' %}"
+			onsubmit="return validateForm(this);">
+			{% csrf_token %}
+
+			<div class="form-group">
+				<label class="form-label">📌 Title of Your Experience</label>
+				<input type="text" name="experience_title" placeholder="e.g., How I Overcame My Fear" class="form-input"
+					maxlength="200" required />
+				<small style="color: #999; font-size: 0.85rem;">Keep it short and meaningful (max 200
+					characters)</small>
+			</div>
+
+			<div class="form-group">
+				<label class="form-label">✨ Your Success Story (Detailed)</label>
+				<textarea name="experience_text"
+					placeholder="Share your experience in detail...&#10;- What was the challenge you faced?&#10;- What steps did you take?&#10;- How did you overcome it?&#10;- What advice would you give to others?"
+					class="form-textarea" rows="10" required></textarea>
+				<small style="color: #999; font-size: 0.85rem;">Share as much detail as you can. Your story can help
+					someone in need.</small>
+			</div>
+
+			<div
+				style="background: rgba(88, 166, 255, 0.15); padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #58a6ff;">
+				<h4 style="margin-top: 0; color: #58a6ff;">💡 Tips for a Great Experience Post:</h4>
+				<ul style="margin: 10px 0; padding-left: 20px; font-size: 0.9rem; line-height: 1.6;">
+					<li>Be specific: Mention what worked for you</li>
+					<li>Be authentic: Share your genuine feelings and journey</li>
+					<li>Be hopeful: End with encouragement for others</li>
+					<li>Be kind: Remember others might be struggling</li>
+				</ul>
+			</div>
+
+			<button type="submit" class="form-submit">
+				<i class="fas fa-paper-plane"></i> &nbsp;Share Experience
+			</button>
+		</form>
+
+		{% endif %}
+
+		<div class="auth-footer-link mt-2">
+			<a href="javascript:history.back()"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+	function validateForm(formObj) {
+		const title = formObj.experience_title.value.trim();
+		const experience = formObj.experience_text.value.trim();
+
+		if (!title) {
+			alert("Please enter a title for your experience.");
+			return false;
+		}
+
+		if (title.length < 3) {
+			alert("Title should be at least 3 characters long.");
+			return false;
+		}
+
+		if (!experience) {
+			alert("Please share your experience in detail.");
+			return false;
+		}
+
+		if (experience.length < 50) {
+			alert("Please write at least 50 characters. More details help others more!");
+			return false;
+		}
+
+		return true;
+	}
+</script>
+{% endblock %}
